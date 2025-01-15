@@ -1,0 +1,7 @@
+{
+    "sketch": "Gateway.ino",
+    "board": "Moteino:avr:Moteino",
+    "programmer": "Moteino:stk500",
+    "port": "/dev/ttyUSB0",
+    "output": "build"
+}

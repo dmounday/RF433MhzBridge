@@ -1,0 +1,124 @@
+esphome:
+  name: gw8266-433
+
+esp8266:
+  board: nodemcuv2
+
+# Enable logging
+logger:
+  baud_rate: 115200
+  level: debug
+
+# Enable Home Assistant API
+api:
+  password: ""
+
+ota:
+  - platform: esphome
+    password: ""
+
+wifi:
+  ssid: "myhouse"
+  password: "rozel1965roze"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Gw433 Fallback Hotspot"
+    password: "kZ7DUKSjROrj"
+
+i2c:
+  sda: D2
+  scl: D1
+  scan: true
+  id: bus_a
+
+
+captive_portal:
+
+uart:
+  id: uart_sw
+  tx_pin: D8
+  rx_pin: D7
+  baud_rate: 9600
+  data_bits: 8
+  parity: NONE
+  stop_bits: 1
+  debug:
+    direction: BOTH
+    dummy_receiver: true
+    after: 
+      delimiter: "\r\n"
+#[401] H:53.46 T:24.58 B:5400   [RX_RSSI:-27]\r\n
+    sequence:
+      - lambda: |-
+          UARTDebug::log_string(direction, bytes);
+          int sensorID=0;
+          float sensorTEMP=0; 
+          float sensorRH=0; 
+          int sensorBattery=0;
+          int rssi=0;
+          std::string str(bytes.begin(), bytes.end());
+          int cnt;
+          if ((cnt=sscanf(str.c_str(), "[%d] H:%f T:%f B:%d [RX_RSSI:%d",
+                      &sensorID, &sensorRH, &sensorTEMP, &sensorBattery, &rssi))>= 3){
+            if(sensorID == 401){
+              id(temp401).publish_state(sensorTEMP);
+              id(RH401).publish_state(sensorRH);
+              id(Bat401).publish_state(sensorBattery);
+              id(RSSI401).publish_state(rssi);
+            } else if (sensorID == 402 ){
+              id(temp402).publish_state(sensorTEMP);
+              id(RH402).publish_state(sensorRH);
+              id(Bat402).publish_state(sensorBattery);
+              id(RSSI402).publish_state(rssi);
+            }
+          } 
+sensor:
+  - platform: template
+    name: "Battery 402"
+    id: "Bat402"
+    device_class: voltage
+    unit_of_measurement: mV
+  - platform: template
+    name: "Battery 401"
+    id: "Bat401"
+    device_class: voltage
+    unit_of_measurement: mV
+  - platform: template
+    name: "Temperature 401"
+    id: "temp401"
+    device_class: "temperature"
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "Humidity 401"
+    id: "RH401"
+    device_class: humidity
+    unit_of_measurement: "%"
+  - platform: template
+    name: "Temperature 402"
+    id: "temp402"
+    device_class: "temperature"
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "Humidity 402"
+    id: "RH402"
+    device_class: humidity
+    unit_of_measurement: "%"
+  - platform: template
+    name: "RSSI 401"
+    device_class: "signal_strength"
+    unit_of_measurement: "db"
+    id: "RSSI401"
+  - platform: template
+    name: "RSSI 402"
+    device_class: "signal_strength"
+    unit_of_measurement: "db"
+    id: "RSSI402"
+# local sensors attached to 8266
+  - platform: htu21d
+    model: htu21d
+    temperature:
+      name: "temp400"
+    humidity:
+      name: "RH400"
+
