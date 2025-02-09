@@ -3,7 +3,7 @@ The ESPHome folder contains the yaml file to generate the ESP8266 code to read t
 
 The lowpowerGW folder contains the code to commicate with the remote sensors over 433Mhz RF. 
 
-The SHT21_RF contains code for the remote humitity/temperature sensors. Remote node ID must be unique for eash sensor. Adding sensors requires adding there node ID to the ESPHome yaml file.
+The SHT21_RF contains code for the remote humitity/temperature sensors. Remote node ID must be unique for eash sensor. Adding sensors requires adding the node ID to the ESPHome yaml file.
 
 
 The RF433WIFI folder contains a Kicad schematic for sample hardware.
